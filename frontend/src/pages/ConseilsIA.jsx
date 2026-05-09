@@ -9,10 +9,22 @@ export default function ConseilsIA() {
     setLoading(true);
     try {
       const res = await api.get('/ia/conseils');
-      const data = JSON.parse(res.data);
-      setConseils(data.choices[0].message.content);
-    } catch {
-      setConseils('Erreur lors de la récupération des conseils.');
+      let data = res.data;
+      if (typeof data === 'string') {
+        try {
+          data = JSON.parse(data);
+          setConseils(data.choices[0].message.content);
+        } catch {
+          setConseils(data);
+        }
+      } else if (data.choices) {
+        setConseils(data.choices[0].message.content);
+      } else {
+        setConseils(JSON.stringify(data));
+      }
+    } catch (err) {
+      console.error(err);
+      setConseils('Erreur : ' + err.message);
     }
     setLoading(false);
   };
@@ -25,7 +37,7 @@ export default function ConseilsIA() {
       </button>
       {conseils && (
         <div style={styles.box}>
-          <p>{conseils}</p>
+          <p style={{ whiteSpace: 'pre-wrap' }}>{conseils}</p>
         </div>
       )}
     </div>
@@ -34,5 +46,5 @@ export default function ConseilsIA() {
 
 const styles = {
   btn: { padding: '10px 30px', background: '#9C27B0', color: 'white', border: 'none', cursor: 'pointer', fontSize: 16 },
-  box: { marginTop: 20, padding: 20, background: '#f9f9f9', borderRadius: 8, border: '1px solid #ddd' }
+  box: { marginTop: 20, padding: 20, background: '#f9f9f9', borderRadius: 8, border: '1px solid #ddd', color: '#333' }
 };

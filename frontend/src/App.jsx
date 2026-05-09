@@ -9,12 +9,24 @@ function PrivateRoute({ children }) {
   return localStorage.getItem('token') ? children : <Navigate to="/login" />;
 }
 
+function Dashboard() {
+  return (
+    <div style={{ padding: 30 }}>
+      <h2>Bienvenue sur votre tableau de bord ! 👋</h2>
+      <p>Utilisez la navbar pour naviguer.</p>
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={
+          <PrivateRoute><Navbar /><Dashboard /></PrivateRoute>
+        } />
         <Route path="/depenses" element={
           <PrivateRoute><Navbar /><Depenses /></PrivateRoute>
         } />
